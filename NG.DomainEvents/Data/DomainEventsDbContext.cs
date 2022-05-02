@@ -1,5 +1,4 @@
-﻿using DomainEvents.Hangfire.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
 using NG.DomainEvents.Common;

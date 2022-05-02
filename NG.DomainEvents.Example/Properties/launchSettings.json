@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "DomainEvents.Hangfire": {
+    "NG.DomainEvents.Example": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

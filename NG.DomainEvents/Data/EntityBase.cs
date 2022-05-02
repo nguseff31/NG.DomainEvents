@@ -1,5 +1,4 @@
-﻿using DomainEvents.Hangfire.Models;
-using NG.DomainEvents.Common;
+﻿using NG.DomainEvents.Common;
 
 namespace NG.DomainEvents.Data;
 
