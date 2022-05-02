@@ -1,13 +1,9 @@
 using NG.DomainEvents.Example;
 using NG.DomainEvents.Example.Handlers;
-using NG.DomainEvents.Example.Models.Events;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NG.DomainEvents.Config;
 using NG.DomainEvents.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -19,8 +15,6 @@ builder.Services.AddDbContext<TestDbContext>(opts =>
     opts.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 builder.Services.AddDomainEvents<TestDbContext>(builder.Configuration, typeof(TestHandler1).Assembly);
-builder.Services.Configure<DomainEventsConfig>(builder.Configuration.GetSection(""));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

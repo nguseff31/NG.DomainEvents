@@ -14,7 +14,7 @@ public abstract class DomainEventsControllerBase<TDbContext> : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet("{id]")]
+    [HttpGet("{id}")]
     public async Task<ActionResult> GetEventInfo(long id, CancellationToken cancellationToken)
     {
         var @event = await _dbContext

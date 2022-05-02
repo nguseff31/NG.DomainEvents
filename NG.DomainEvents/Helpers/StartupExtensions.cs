@@ -27,7 +27,7 @@ public static class StartupExtensions
     public static void AddDomainEventMappings(this IServiceCollection services, Assembly assembly)
     {
         var eventTypes = assembly.GetExportedTypes()
-            .Where(t => t.IsInstanceOfType(typeof(DomainEvent)));
+            .Where(t => t.IsAssignableTo(typeof(DomainEvent)));
         var config = new DomainEventsMappingConfig
         {
             Mappings = eventTypes.Select(et => new DomainEventTypeMapping
@@ -35,7 +35,7 @@ public static class StartupExtensions
                 AssemblyType = et,
                 EntityType = GetEntityType(et),
                 Handlers = assembly.GetExportedTypes()
-                    .Where(eh => eh.BaseType?.GetGenericTypeDefinition() == typeof(DomainEventHandler<,,>))
+                    .Where(eh => eh.BaseType?.IsGenericType == true && eh.BaseType?.GetGenericTypeDefinition() == typeof(DomainEventHandler<,,>))
                     .Select(eh => new DomainEventHandlerMappings()
                     {
                         AssemblyType = eh,
