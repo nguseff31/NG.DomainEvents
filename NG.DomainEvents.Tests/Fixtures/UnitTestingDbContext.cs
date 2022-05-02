@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using NG.DomainEvents.Config;
 using NG.DomainEvents.Data;
 
-namespace DomainEvents.Tests.Fixtures;
+namespace NG.DomainEvents.Tests.Fixtures;
 
 public class UnitTestingDbContext : DomainEventsDbContext<UnitTestingDbContext, DomainEventDto, DomainEventResultDto>
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using NG.DomainEvents.Data;
 
-namespace DomainEvents.Tests.Model;
+namespace NG.DomainEvents.Tests.Model;
 
 public class ArticleDto : EntityBase
 {

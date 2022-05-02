@@ -1,7 +1,7 @@
-﻿using DomainEvents.Hangfire.Models.Domain;
-using NG.DomainEvents.Common;
+﻿using NG.DomainEvents.Common;
+using NG.DomainEvents.Example.Models.Domain;
 
-namespace DomainEvents.Hangfire.Models.Events;
+namespace NG.DomainEvents.Example.Models.Events;
 
 public class UserDomainEvent : DomainEvent
 {

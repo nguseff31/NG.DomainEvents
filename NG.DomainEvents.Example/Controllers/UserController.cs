@@ -1,9 +1,9 @@
-﻿using DomainEvents.Hangfire.Models.Domain;
-using DomainEvents.Hangfire.ViewModel;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NG.DomainEvents.Example.Models.Domain;
+using NG.DomainEvents.Example.ViewModel;
 
-namespace DomainEvents.Hangfire.Controllers;
+namespace NG.DomainEvents.Example.Controllers;
 
 [ApiController]
 [Route("users")]

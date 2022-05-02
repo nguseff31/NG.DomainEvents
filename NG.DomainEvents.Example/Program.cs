@@ -1,6 +1,6 @@
-using DomainEvents.Hangfire;
-using DomainEvents.Hangfire.Handlers;
-using DomainEvents.Hangfire.Models.Events;
+using NG.DomainEvents.Example;
+using NG.DomainEvents.Example.Handlers;
+using NG.DomainEvents.Example.Models.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NG.DomainEvents.Config;

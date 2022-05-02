@@ -1,11 +1,11 @@
-﻿using DomainEvents.Hangfire.Models;
-using DomainEvents.Hangfire.Models.Domain;
+﻿using NG.DomainEvents.Example.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NG.DomainEvents.Config;
 using NG.DomainEvents.Data;
+using NG.DomainEvents.Example.Models.Domain;
 
-namespace DomainEvents.Hangfire;
+namespace NG.DomainEvents.Example;
 
 public class TestDbContext : DomainEventsDbContext<TestDbContext, DomainEventDto, DomainEventResultDto>
 {

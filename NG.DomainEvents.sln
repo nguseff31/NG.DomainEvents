@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainEvents.Hangfire", "DomainEvents.Hangfire\DomainEvents.Hangfire.csproj", "{0C5FAAB9-0E95-43B6-B845-FAB234D0900D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NG.DomainEvents.Example", "NG.DomainEvents.Example\NG.DomainEvents.Example.csproj", "{0C5FAAB9-0E95-43B6-B845-FAB234D0900D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainEvents.Tests", "DomainEvents.Tests\DomainEvents.Tests.csproj", "{A4189DDF-AA74-4713-960B-45CEEA9C1AB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NG.DomainEvents.Tests", "NG.DomainEvents.Tests\NG.DomainEvents.Tests.csproj", "{A4189DDF-AA74-4713-960B-45CEEA9C1AB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NG.DomainEvents", "NG.DomainEvents\NG.DomainEvents.csproj", "{22CA35DC-5342-4C31-8EB7-B58C3B2D94B0}"
 EndProject

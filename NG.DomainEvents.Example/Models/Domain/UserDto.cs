@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using DomainEvents.Hangfire.Models.Events;
 using NG.DomainEvents.Data;
+using NG.DomainEvents.Example.Models.Events;
 
-namespace DomainEvents.Hangfire.Models.Domain;
+namespace NG.DomainEvents.Example.Models.Domain;
 
 [Table("users")]
 public class UserDto : EntityBase

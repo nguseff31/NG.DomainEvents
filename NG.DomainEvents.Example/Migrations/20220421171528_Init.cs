@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DomainEvents.Hangfire.Migrations
+namespace NG.DomainEvents.Example.Migrations
 {
     public partial class Init : Migration
     {

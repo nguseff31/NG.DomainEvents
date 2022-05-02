@@ -1,4 +1,4 @@
-﻿namespace DomainEvents.Hangfire.ViewModel;
+﻿namespace NG.DomainEvents.Example.ViewModel;
 
 public class UserCreate
 {

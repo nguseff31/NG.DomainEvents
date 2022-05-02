@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using DomainEvents.Hangfire.Models;
-using DomainEvents.Hangfire.Models.Events;
+using NG.DomainEvents.Example.Models;
 using NG.DomainEvents.Common;
 using NG.DomainEvents.Config;
+using NG.DomainEvents.Example.Models.Events;
 
-namespace DomainEvents.Hangfire.Handlers;
+namespace NG.DomainEvents.Example.Handlers;
 
 [DomainEventHandler("test_handler_1")]
 public class TestHandler1 : DomainEventHandler<TestDbContext, UserCreated, TestHandler1.Result>

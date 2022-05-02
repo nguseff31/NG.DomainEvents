@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace DomainEvents.Tests;
+namespace NG.DomainEvents.Tests;
 
 public class UnitTest1
 {

@@ -1,4 +1,4 @@
-namespace DomainEvents.Hangfire;
+namespace NG.DomainEvents.Example;
 
 public class WeatherForecast
 {
