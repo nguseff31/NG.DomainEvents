@@ -18,6 +18,9 @@ public class DomainEventDto
     [Required]
     [StringLength(63)]
     public string EntityTableName { get; set; }
+
+    [Required]
+    public int Order { get; set; } = 0;
     
     [Required]
     [StringLength(36)]
@@ -31,6 +34,9 @@ public class DomainEventDto
     
     [Required]
     public bool ShouldExecute { get; set; }
+
+    [Required]
+    public string CorrelationId { get; set; }
     
     [Required]
     public int Retries { get; set; }

@@ -22,6 +22,7 @@ public static class StartupExtensions
         {
             services.AddHostedService<DomainEventsRetryJob<TDbContext>>();
         }
+        // todo validate mappings
     }
     
     public static void AddDomainEventMappings(this IServiceCollection services, Assembly assembly)

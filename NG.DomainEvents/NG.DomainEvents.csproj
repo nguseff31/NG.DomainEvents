@@ -5,6 +5,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <IsPackable>true</IsPackable>
         <Nullable>enable</Nullable>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Domain events for EF DbContext</Title>
+        <Description>Persistent domain events with audit and retry logic for ef core.</Description>
+        <Copyright>Nikita Gusev</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>

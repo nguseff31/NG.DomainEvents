@@ -11,11 +11,17 @@ namespace NG.DomainEvents.Data {
     {
         protected DomainEventsMappingConfig MappingConfig;
         protected IOptionsSnapshot<DomainEventsConfig> DomainEventsConfig;
+        protected IServiceProvider ServiceProvider;
         
-        protected DomainEventsDbContext(DbContextOptions<TContext> options, DomainEventsMappingConfig mappingConfig, IOptionsSnapshot<DomainEventsConfig> domainEventsConfig) : base(options)
+        protected DomainEventsDbContext(
+            DbContextOptions<TContext> options,
+            DomainEventsMappingConfig mappingConfig,
+            IOptionsSnapshot<DomainEventsConfig> domainEventsConfig,
+            IServiceProvider serviceProvider) : base(options)
         {
             MappingConfig = mappingConfig;
             DomainEventsConfig = domainEventsConfig;
+            ServiceProvider = serviceProvider;
         }
 
         public DbSet<TEventDto> Events { get; set; }
@@ -61,18 +67,24 @@ namespace NG.DomainEvents.Data {
         {
             var eventCount = 0;
             foreach (var item in entities)
-            foreach (var domainEvent in item.DomainEvents) {
-                domainEvent.SetEntity(item.Entry.Entity);
-                var mappings = MappingConfig.GetMapping(domainEvent.GetType());
-                var domainEventEntity = new DomainEventDto {
-                    EntityTableName = item.Entry.Metadata.GetTableName()!,
-                    EntityId = item.Entry.IsKeySet ? item.Entry.Entity.GetEntityId() : null,
-                    EventType = mappings?.EntityType,
-                    ShouldExecute = true // todo move to config 
-                };
-                await AddAsync(domainEventEntity, cancellationToken);
-                domainEventEntity.SetEvent(domainEvent);
-                eventCount++;
+            {
+                var order = 0;
+                foreach (var domainEvent in item.DomainEvents)
+                {
+                    domainEvent.SetEntity(item.Entry.Entity);
+                    var mappings = MappingConfig.GetMapping(domainEvent.GetType());
+                    var domainEventEntity = new DomainEventDto
+                    {
+                        EntityTableName = item.Entry.Metadata.GetTableName()!,
+                        EntityId = item.Entry.IsKeySet ? item.Entry.Entity.GetEntityId() : null,
+                        EventType = mappings?.EntityType,
+                        ShouldExecute = true,
+                        Order = order++
+                    };
+                    await AddAsync(domainEventEntity, cancellationToken);
+                    domainEventEntity.SetEvent(domainEvent);
+                    eventCount++;
+                }
             }
 
             return eventCount;

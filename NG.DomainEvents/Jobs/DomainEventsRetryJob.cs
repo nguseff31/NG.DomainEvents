@@ -49,37 +49,42 @@ public class DomainEventsRetryJob<TDbContext> : BackgroundService
     {
         using var scope = _serviceProvider.CreateScope();
         using var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        var eventsToExecute = await dbContext.Events
+        var eventGroups = await dbContext.Events
             .Where(e => e.ShouldExecute)
+            .GroupBy(e => new { e.EntityId, e.EventType })
             .ToListAsync(cancellationToken);
 
         
-        foreach (var @event in eventsToExecute)
+        foreach (var @eventGroup in eventGroups)
         {
+            var eventsToExecute = @eventGroup.OrderBy(e => e.Order);
             using var eventScope = _serviceProvider.CreateScope();
-            if (@event.Retries >= _eventsConfig.CurrentValue.MaxRetries)
+            foreach (var @event in eventsToExecute)
             {
-                @event.ShouldExecute = false;
-                continue; // todo move retries to handlers
-            }
-            var eventMapping = _eventsMappingConfig.Mappings.FirstOrDefault(e => e.EntityType == @event.EventType);
-            if (eventMapping != null)
-            {
-                var eventData = @event.GetEvent(eventMapping.AssemblyType);
-                if (eventData != null)
+                if (@event.Retries >= _eventsConfig.CurrentValue.MaxRetries)
                 {
-                    var mediator = eventScope.ServiceProvider.GetRequiredService<IMediator>();
-                    try
+                    @event.ShouldExecute = false;
+                    continue; // todo move retries to handlers
+                }
+                var eventMapping = _eventsMappingConfig.Mappings.FirstOrDefault(e => e.EntityType == @event.EventType);
+                if (eventMapping != null)
+                {
+                    var eventData = @event.GetEvent(eventMapping.AssemblyType);
+                    if (eventData != null)
                     {
-                        @event.Retries++;
-                        await mediator.Publish(eventData, cancellationToken);
-                        @event.ShouldExecute = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex is ITaskResultException)
+                        var mediator = eventScope.ServiceProvider.GetRequiredService<IMediator>();
+                        try
                         {
-                            @event.ShouldExecute = false;                            
+                            @event.Retries++;
+                            await mediator.Publish(eventData, cancellationToken);
+                            @event.ShouldExecute = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex is ITaskResultException)
+                            {
+                                @event.ShouldExecute = false;                            
+                            }
                         }
                     }
                 }

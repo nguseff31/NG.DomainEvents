@@ -2,7 +2,7 @@
 
 public class DomainEventsMappingConfig
 {
-    public List<DomainEventTypeMapping> Mappings { get; set; } = new();
+    public List<DomainEventTypeMapping> Mappings { get; set; } = new(); //todo to dictionary
     
     public DomainEventTypeMapping? GetMapping(Type type)
     {

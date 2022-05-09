@@ -10,9 +10,11 @@ namespace NG.DomainEvents.Example;
 public class TestDbContext : DomainEventsDbContext<TestDbContext, DomainEventDto, DomainEventResultDto>
 {
     public DbSet<UserDto> Users { get; set; }
-
     
-    public TestDbContext(DbContextOptions<TestDbContext> options, DomainEventsMappingConfig mappingConfig, IOptionsSnapshot<DomainEventsConfig> domainEventsConfig) : base(options, mappingConfig, domainEventsConfig)
+    public TestDbContext(DbContextOptions<TestDbContext> options,
+        DomainEventsMappingConfig mappingConfig,
+        IOptionsSnapshot<DomainEventsConfig> domainEventsConfig,
+        IServiceProvider serviceProvider) : base(options, mappingConfig, domainEventsConfig, serviceProvider)
     {
     }
 }
