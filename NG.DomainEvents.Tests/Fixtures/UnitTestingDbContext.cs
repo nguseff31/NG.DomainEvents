@@ -1,14 +1,14 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
 using NG.DomainEvents.Config;
 using NG.DomainEvents.Data;
+using NG.DomainEvents.Tests.Model;
 
 namespace NG.DomainEvents.Tests.Fixtures;
 
-public class UnitTestingDbContext : DomainEventsDbContext<UnitTestingDbContext, DomainEventDto, DomainEventResultDto>
-{
-    public UnitTestingDbContext(DbContextOptions<UnitTestingDbContext> options, DomainEventsMappingConfig mappingConfig, IOptionsSnapshot<DomainEventsConfig> domainEventsConfig, IServiceProvider serviceProvider) : base(options, mappingConfig, domainEventsConfig, serviceProvider)
-    {
+public class UnitTestingDbContext : DomainEventsDbContext<UnitTestingDbContext, DomainEventDto, DomainEventResultDto> {
+    public DbSet<ArticleDto> Articles { get; set; }
+
+    public UnitTestingDbContext(DbContextOptions<UnitTestingDbContext> options, DomainEventsMappingConfig mappingConfig)
+        : base(options, mappingConfig) {
     }
 }

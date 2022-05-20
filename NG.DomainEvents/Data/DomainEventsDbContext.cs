@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Options;
 using NG.DomainEvents.Common;
 using NG.DomainEvents.Config;
 
@@ -10,18 +9,11 @@ namespace NG.DomainEvents.Data {
         where TResultDto : DomainEventResultDto
     {
         protected DomainEventsMappingConfig MappingConfig;
-        protected IOptionsSnapshot<DomainEventsConfig> DomainEventsConfig;
-        protected IServiceProvider ServiceProvider;
         
-        protected DomainEventsDbContext(
-            DbContextOptions<TContext> options,
-            DomainEventsMappingConfig mappingConfig,
-            IOptionsSnapshot<DomainEventsConfig> domainEventsConfig,
-            IServiceProvider serviceProvider) : base(options)
+        protected DomainEventsDbContext(DbContextOptions<TContext> options,
+            DomainEventsMappingConfig mappingConfig) : base(options)
         {
             MappingConfig = mappingConfig;
-            DomainEventsConfig = domainEventsConfig;
-            ServiceProvider = serviceProvider;
         }
 
         public DbSet<TEventDto> Events { get; set; }
@@ -49,23 +41,20 @@ namespace NG.DomainEvents.Data {
             if (!entities.Any()) {
                 return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
             }
-            
             // save entities to fill auto generated ids
             var saveResult = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-            var newEventsCount = await AddDomainEventsToDb(entities, cancellationToken);
-            if (newEventsCount > 0) {
-                saveResult += await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await foreach (var @event in AddDomainEventsToDb(entities, cancellationToken)) {
+                //todo fire events                    
             }
-            
-            return saveResult;
+            var domainEventResult = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return saveResult + domainEventResult;
         }
         
-        async Task<int> AddDomainEventsToDb(
+        async IAsyncEnumerable<DomainEvent> AddDomainEventsToDb(
             IEnumerable<(EntityEntry<IEntityWithDomainEvents> Entry,
             IReadOnlyCollection<DomainEvent> DomainEvents)> entities,
             CancellationToken cancellationToken)
         {
-            var eventCount = 0;
             foreach (var item in entities)
             {
                 var order = 0;
@@ -81,13 +70,11 @@ namespace NG.DomainEvents.Data {
                         ShouldExecute = true,
                         Order = order++
                     };
-                    await AddAsync(domainEventEntity, cancellationToken);
                     domainEventEntity.SetEvent(domainEvent);
-                    eventCount++;
+                    await AddAsync(domainEventEntity, cancellationToken);
+                    yield return domainEvent;
                 }
             }
-
-            return eventCount;
         }
     }
 }

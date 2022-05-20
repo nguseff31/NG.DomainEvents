@@ -2,15 +2,16 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using NG.DomainEvents.Common;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace NG.DomainEvents.Data;
 
 [Table("domain_event")]
-public class DomainEventDto
-{
+public class DomainEventDto {
     [Key]
     public long Id { get; set; }
-    
+
     [Required]
     [StringLength(256)]
     public string EventType { get; set; }
@@ -21,41 +22,39 @@ public class DomainEventDto
 
     [Required]
     public int Order { get; set; } = 0;
-    
+
     [Required]
     [StringLength(36)]
     public string EntityId { get; set; }
-    
+
     [Required]
     public DateTime Created { get; set; } = DateTime.UtcNow;
-    
+
     [Column(TypeName = "jsonb")]
     public string Data { get; set; }
-    
+
     [Required]
     public bool ShouldExecute { get; set; }
 
     [Required]
-    public string CorrelationId { get; set; }
-    
+    public string CorrelationId { get; set; } = Guid.Empty.ToString();
+
     [Required]
     public int Retries { get; set; }
-    
+
     [Required]
     private bool Succeded { get; set; }
 
     [InverseProperty(nameof(DomainEventResultDto.DomainEvent))]
     public virtual ICollection<DomainEventResultDto> Results { get; set; } = new List<DomainEventResultDto>();
-    
+
     public void SetEvent(DomainEvent domainEvent) {
         Data = JsonSerializer.Serialize(domainEvent, domainEvent.GetType());
     }
 
-    public DomainEvent? GetEvent(Type eventType)
-    {
+    public DomainEvent? GetEvent(Type eventType) {
         var @event = JsonSerializer.Deserialize(Data, eventType) as DomainEvent;
-        if (@event != null)
-        {
+        if (@event != null) {
             @event.Id = Id;
         }
 

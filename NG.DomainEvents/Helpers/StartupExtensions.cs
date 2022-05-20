@@ -9,54 +9,51 @@ using NG.DomainEvents.Jobs;
 
 namespace NG.DomainEvents.Helpers;
 
-public static class StartupExtensions
-{
-    public static void AddDomainEvents<TDbContext>(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
-        where TDbContext : DomainEventsDbContext<TDbContext, DomainEventDto, DomainEventResultDto>
-    {
+public static class StartupExtensions {
+    public static void AddDomainEvents<TDbContext>(this IServiceCollection services, IConfiguration configuration,
+        Assembly assembly)
+        where TDbContext : DomainEventsDbContext<TDbContext, DomainEventDto, DomainEventResultDto> {
         services.AddMediatR(assembly);
         services.Configure<DomainEventsConfig>(configuration.GetSection("DomainEvents"));
         services.AddDomainEventMappings(assembly);
         var retryJobEnabled = configuration.GetValue("DomainEvents:RetryJobEnabled", true);
-        if (retryJobEnabled)
-        {
+        if (retryJobEnabled) {
             services.AddHostedService<DomainEventsRetryJob<TDbContext>>();
         }
         // todo validate mappings
     }
-    
-    public static void AddDomainEventMappings(this IServiceCollection services, Assembly assembly)
-    {
+
+    public static void AddDomainEventMappings(this IServiceCollection services, Assembly assembly) {
+        var config = GetMappingConfig(assembly);
+        services.AddSingleton(config);
+    }
+
+    public static DomainEventsMappingConfig GetMappingConfig(Assembly assembly) {
         var eventTypes = assembly.GetExportedTypes()
             .Where(t => t.IsAssignableTo(typeof(DomainEvent)));
-        var config = new DomainEventsMappingConfig
-        {
-            Mappings = eventTypes.Select(et => new DomainEventTypeMapping
-            {
+        var config = new DomainEventsMappingConfig {
+            Mappings = eventTypes.Select(et => new DomainEventTypeMapping {
                 AssemblyType = et,
                 EntityType = GetEntityType(et),
                 Handlers = assembly.GetExportedTypes()
-                    .Where(eh => eh.BaseType?.IsGenericType == true && eh.BaseType?.GetGenericTypeDefinition() == typeof(DomainEventHandler<,,>))
-                    .Select(eh => new DomainEventHandlerMappings()
-                    {
-                        AssemblyType = eh,
-                        HandlerType = GetHandlerType(eh)
-                    })
+                    .Where(eh =>
+                        eh.BaseType?.IsGenericType == true &&
+                        eh.BaseType?.GetGenericTypeDefinition() == typeof(DomainEventHandler<,,>))
+                    .Select(eh =>
+                        new DomainEventHandlerMappings() { AssemblyType = eh, HandlerType = GetHandlerType(eh) })
                     .ToList()
             }).ToList()
         };
-        services.AddSingleton(config);
+        return config;
     }
-    
-    
-    static string GetEntityType(Type t)
-    {
+
+
+    static string GetEntityType(Type t) {
         var attribute = t.GetCustomAttribute(typeof(DomainEventAttribute)) as DomainEventAttribute;
         return attribute?.EventType ?? t.Name;
     }
 
-    static string GetHandlerType(Type t)
-    {
+    static string GetHandlerType(Type t) {
         var attribute = t.GetCustomAttribute(typeof(DomainEventHandlerAttribute)) as DomainEventHandlerAttribute;
         return attribute?.HandlerName ?? t.Name;
     }

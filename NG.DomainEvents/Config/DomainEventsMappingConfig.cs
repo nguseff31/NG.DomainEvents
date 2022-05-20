@@ -8,4 +8,9 @@ public class DomainEventsMappingConfig
     {
         return Mappings.FirstOrDefault(m => m.AssemblyType == type);
     }
+    
+    public DomainEventTypeMapping? GetMapping(string entityType)
+    {
+        return Mappings.FirstOrDefault(m => m.EntityType == entityType);
+    }
 }
