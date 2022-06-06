@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -25,4 +27,32 @@ public class DbContextEventTests : IClassFixture<DbFixture> {
             .ToArrayAsync();
         Assert.Single(events);
     }
+
+    [Fact]
+    public async Task StateMachineTest() {
+
+    }
+
+    async IAsyncEnumerable<SomeData> GetSomeData() {
+        foreach (var i in Enumerable.Range(0, 10)) {
+            yield return new SomeData {
+
+            };
+        }
+    }
+    async Task<int> GetAnotherData(int data) {
+        await Task.Delay(1);
+        return data + data;
+    }
+
+    class SomeData {
+        public int Data { get; set; }
+
+        public Lazy<int> AnotherData { get; set; }
+    }
+}
+
+class OrderCreatedEvent {
+    public int Id { get; set; }
+    public DateTime Date { get; set; } = DateTime.UtcNow;
 }

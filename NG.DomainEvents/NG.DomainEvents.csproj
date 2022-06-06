@@ -10,6 +10,7 @@
         <Description>Persistent domain events with audit and retry logic for ef core.</Description>
         <Copyright>Nikita Gusev</Copyright>
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>

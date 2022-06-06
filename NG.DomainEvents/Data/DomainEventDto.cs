@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using NG.DomainEvents.Common;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 
@@ -17,10 +18,6 @@ public class DomainEventDto {
     public string EventType { get; set; }
 
     [Required]
-    [StringLength(63)]
-    public string EntityTableName { get; set; }
-
-    [Required]
     public int Order { get; set; } = 0;
 
     [Required]
@@ -34,22 +31,13 @@ public class DomainEventDto {
     public string Data { get; set; }
 
     [Required]
-    public bool ShouldExecute { get; set; }
-
-    [Required]
-    public string CorrelationId { get; set; } = Guid.Empty.ToString();
-
-    [Required]
-    public int Retries { get; set; }
-
-    [Required]
-    private bool Succeded { get; set; }
+    public string BucketId { get; set; } = Guid.Empty.ToString();
 
     [InverseProperty(nameof(DomainEventResultDto.DomainEvent))]
     public virtual ICollection<DomainEventResultDto> Results { get; set; } = new List<DomainEventResultDto>();
 
     public void SetEvent(DomainEvent domainEvent) {
-        Data = JsonSerializer.Serialize(domainEvent, domainEvent.GetType());
+        Data = JsonSerializer.Serialize(domainEvent);
     }
 
     public DomainEvent? GetEvent(Type eventType) {

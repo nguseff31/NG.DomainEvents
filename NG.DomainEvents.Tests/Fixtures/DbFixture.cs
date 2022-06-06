@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NG.DomainEvents.Config;
+using NG.DomainEvents.Data;
+using NG.DomainEvents.Example;
 using NG.DomainEvents.Helpers;
 
 namespace NG.DomainEvents.Tests.Fixtures;
@@ -18,7 +20,8 @@ public class DbFixture : IDisposable {
             .UseNpgsql(config.GetConnectionString("Default"), opts => {
             })
             .Options;
-        Db = new UnitTestingDbContext(dbContextOptions, StartupExtensions.GetMappingConfig(typeof(DbFixture).Assembly));
+        var relayService = DomainEventRelayService.GetInstance();
+        Db = new UnitTestingDbContext(dbContextOptions, StartupExtensions.GetMappingConfig(typeof(DbFixture).Assembly), relayService);
         Db.Database.Migrate();
     }
 

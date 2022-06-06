@@ -3,14 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using NG.DomainEvents.Common;
 
+#pragma warning disable CS8618
+
 namespace NG.DomainEvents.Data;
 
 [Table("domain_event_result")]
-public class DomainEventResultDto
-{
+public class DomainEventResultDto {
     [Key]
     public long Id { get; set; }
-    
+
     [Required]
     public long DomainEventId { get; set; }
 
@@ -34,13 +35,11 @@ public class DomainEventResultDto
     [InverseProperty(nameof(DomainEventDto.Results))]
     public DomainEventDto DomainEvent { get; set; }
 
-    public T? GetResult<T>() where T : DomainEventResult
-    {
+    public T? GetResult<T>() where T : DomainEventResult {
         return JsonSerializer.Deserialize<T>(Data);
     }
 
-    public void SetResult<T>(T result) where T : DomainEventResult
-    {
+    public void SetResult<T>(T result) where T : DomainEventResult {
         Data = JsonSerializer.Serialize(result);
     }
 }

@@ -1,6 +1,8 @@
 using NG.DomainEvents.Example;
 using NG.DomainEvents.Example.Handlers;
 using Microsoft.EntityFrameworkCore;
+using NG.DomainEvents.Config;
+using NG.DomainEvents.Data;
 using NG.DomainEvents.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,7 @@ builder.Services.AddDbContext<TestDbContext>(opts =>
 {
     opts.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
+builder.Services.AddSingleton(DomainEventRelayService.GetInstance());
 builder.Services.AddDomainEvents<TestDbContext>(builder.Configuration, typeof(TestHandler1).Assembly);
 var app = builder.Build();
 

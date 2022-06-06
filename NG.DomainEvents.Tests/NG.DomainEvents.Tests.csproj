@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\NG.DomainEvents.Example\NG.DomainEvents.Example.csproj" />
       <ProjectReference Include="..\NG.DomainEvents\NG.DomainEvents.csproj" />
     </ItemGroup>
 

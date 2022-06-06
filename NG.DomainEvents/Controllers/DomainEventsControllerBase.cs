@@ -5,18 +5,15 @@ using NG.DomainEvents.Data;
 namespace NG.DomainEvents.Controllers;
 
 public abstract class DomainEventsControllerBase<TDbContext> : ControllerBase
-    where TDbContext : DomainEventsDbContext<TDbContext, DomainEventDto, DomainEventResultDto>
-{
+    where TDbContext : DomainEventsDbContext<TDbContext> {
     private TDbContext _dbContext;
 
-    public DomainEventsControllerBase(TDbContext dbContext)
-    {
+    public DomainEventsControllerBase(TDbContext dbContext) {
         _dbContext = dbContext;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult> GetEventInfo(long id, CancellationToken cancellationToken)
-    {
+    public async Task<ActionResult> GetEventInfo(long id, CancellationToken cancellationToken) {
         var @event = await _dbContext
             .Events
             .Include(e => e.Results)
@@ -25,8 +22,7 @@ public abstract class DomainEventsControllerBase<TDbContext> : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetFailedEvents()
-    {
+    public async Task<ActionResult> GetFailedEvents() {
         throw new NotImplementedException(); // todo need another property on event
     }
 }

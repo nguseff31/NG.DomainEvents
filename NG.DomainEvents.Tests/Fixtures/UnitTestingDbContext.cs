@@ -5,10 +5,11 @@ using NG.DomainEvents.Tests.Model;
 
 namespace NG.DomainEvents.Tests.Fixtures;
 
-public class UnitTestingDbContext : DomainEventsDbContext<UnitTestingDbContext, DomainEventDto, DomainEventResultDto> {
+public class UnitTestingDbContext : DomainEventsDbContext<UnitTestingDbContext> {
     public DbSet<ArticleDto> Articles { get; set; }
 
-    public UnitTestingDbContext(DbContextOptions<UnitTestingDbContext> options, DomainEventsMappingConfig mappingConfig)
-        : base(options, mappingConfig) {
+    public UnitTestingDbContext(DbContextOptions<UnitTestingDbContext> options, DomainEventsMappingConfig mappingConfig,
+                                DomainEventRelayService relayService)
+        : base(options, mappingConfig, relayService) {
     }
 }

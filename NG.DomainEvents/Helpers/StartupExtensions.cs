@@ -12,20 +12,31 @@ namespace NG.DomainEvents.Helpers;
 public static class StartupExtensions {
     public static void AddDomainEvents<TDbContext>(this IServiceCollection services, IConfiguration configuration,
         Assembly assembly)
-        where TDbContext : DomainEventsDbContext<TDbContext, DomainEventDto, DomainEventResultDto> {
-        services.AddMediatR(assembly);
+        where TDbContext : DomainEventsDbContext<TDbContext> {
         services.Configure<DomainEventsConfig>(configuration.GetSection("DomainEvents"));
         services.AddDomainEventMappings(assembly);
         var retryJobEnabled = configuration.GetValue("DomainEvents:RetryJobEnabled", true);
         if (retryJobEnabled) {
-            services.AddHostedService<DomainEventsRetryJob<TDbContext>>();
+            services.AddHostedService<DomainEventProcessingJob<TDbContext>>();
         }
         // todo validate mappings
     }
 
     public static void AddDomainEventMappings(this IServiceCollection services, Assembly assembly) {
         var config = GetMappingConfig(assembly);
+        AddHandlers(services, assembly);
         services.AddSingleton(config);
+    }
+
+    static void AddHandlers(IServiceCollection services, Assembly assembly) {
+        var handlers = assembly.GetExportedTypes()
+            .Where(eh =>
+                eh.BaseType?.IsGenericType == true &&
+                !eh.IsAbstract &&
+                eh.BaseType?.GetGenericTypeDefinition() == typeof(DomainEventHandler<,,>));
+        foreach (var handlerType in handlers) {
+            services.AddScoped(handlerType);
+        }
     }
 
     public static DomainEventsMappingConfig GetMappingConfig(Assembly assembly) {

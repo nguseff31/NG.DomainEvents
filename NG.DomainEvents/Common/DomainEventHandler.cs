@@ -11,9 +11,8 @@ namespace NG.DomainEvents.Common;
 
 public abstract class DomainEventHandler<TDbContext, TEvent, TResult> : INotificationHandler<TEvent>
     where TEvent : DomainEvent
-    where TDbContext : DomainEventsDbContext<TDbContext, DomainEventDto, DomainEventResultDto>
-    where TResult : DomainEventResult, new()
-{
+    where TDbContext : DomainEventsDbContext<TDbContext>
+    where TResult : DomainEventResult, new() {
     protected readonly TDbContext DbContext;
     protected readonly ILogger Logger;
     protected readonly DomainEventsMappingConfig MappingConfig;
@@ -21,23 +20,20 @@ public abstract class DomainEventHandler<TDbContext, TEvent, TResult> : INotific
     protected DomainEventHandler(
         TDbContext dbContext,
         ILogger<INotificationHandler<TEvent>> logger,
-        DomainEventsMappingConfig mappingConfig)
-    {
+        DomainEventsMappingConfig mappingConfig) {
         DbContext = dbContext;
         Logger = logger;
         MappingConfig = mappingConfig;
     }
 
-    public async Task Handle(TEvent domainEvent, CancellationToken cancellationToken)
-    {
+    public async Task Handle(TEvent domainEvent, CancellationToken cancellationToken) {
         var handlerMap = MappingConfig.Mappings
             .SelectMany(e => e.Handlers)
             .FirstOrDefault(h => h.AssemblyType == GetType());
-        if (handlerMap == null)
-        {
+        if (handlerMap == null) {
             throw new ArgumentException("Handler map was not found for type {HandlerType}", GetType().FullName);
         }
-        
+
         var isCompleted = await DbContext.Set<DomainEventResultDto>()
             .AnyAsync(x =>
                 x.DomainEventId == domainEvent.Id
@@ -72,6 +68,7 @@ public abstract class DomainEventHandler<TDbContext, TEvent, TResult> : INotific
             if (result.NeedRetry && result.ExceptionInstance != null) {
                 throw new AggregateException(e, result.ExceptionInstance);
             }
+
             throw;
         }
 
@@ -83,16 +80,14 @@ public abstract class DomainEventHandler<TDbContext, TEvent, TResult> : INotific
             ExceptionDispatchInfo.Capture(result.ExceptionInstance).Throw();
         }
     }
-    
+
     async Task<TResult> GetResult(TEvent domainEvent, CancellationToken cancellationToken) {
         try {
             return await HandleAsync(domainEvent, cancellationToken);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             LogException(domainEvent, e);
-            return e switch
-            {
+            return e switch {
                 NotNeededException => new TResult { NotNeeded = true },
                 AlreadyDoneException => new TResult { AlreadyDone = true },
                 _ => new TResult {
@@ -103,23 +98,18 @@ public abstract class DomainEventHandler<TDbContext, TEvent, TResult> : INotific
         }
     }
 
-    private void LogException(TEvent domainEvent, Exception e)
-    {
+    private void LogException(TEvent domainEvent, Exception e) {
         var level = GetLogLevel(e);
-        if (level == LogLevel.Error)
-        {
+        if (level == LogLevel.Error) {
             Logger.LogError(e, "Failed to handle domain event `{id}`", domainEvent.Id);
         }
-        else
-        {
-            Logger.Log(level, "Failed to handle domain event `{id}`: {error}", domainEvent. Id, e.Message);
+        else {
+            Logger.Log(level, "Failed to handle domain event `{id}`: {error}", domainEvent.Id, e.Message);
         }
     }
 
-    private LogLevel GetLogLevel(Exception exception)
-    {
-        if (exception is not ITaskResultException)
-        {
+    private LogLevel GetLogLevel(Exception exception) {
+        if (exception is not ITaskResultException) {
             return LogLevel.Error;
         }
 

@@ -6,10 +6,10 @@ using NG.DomainEvents.Example.Models.Domain;
 
 namespace NG.DomainEvents.Example;
 
-public class TestDbContext : DomainEventsDbContext<TestDbContext, DomainEventDto, DomainEventResultDto> {
+public class TestDbContext : DomainEventsDbContext<TestDbContext> {
     public DbSet<UserDto> Users { get; set; }
 
     public TestDbContext(DbContextOptions<TestDbContext> options,
-                         DomainEventsMappingConfig mappingConfig) : base(options, mappingConfig) {
-    }
+                         DomainEventsMappingConfig mappingConfig,
+                         DomainEventRelayService relayService) : base(options, mappingConfig, relayService) { }
 }
